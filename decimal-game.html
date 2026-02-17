@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decimal Dash! 🚀</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+
+        :root {
+            --primary: #4A90E2;
+            --secondary: #FF6B6B;
+            --success: #6BCB77;
+            --warning: #FFD93D;
+            --bg: #F7F9FC;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(#e6e9f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            /* Ensure container doesn't overflow screen */
+            overflow-y: auto; 
+        }
+
+        h1 { color: var(--primary); margin-bottom: 0.5rem; font-size: 2.2rem; }
+        h2 { font-size: 1.5rem; margin: 10px 0; }
+
+        /* Screens */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .screen.active { display: flex; }
+
+        /* Inputs */
+        input[type="text"] {
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 70%;
+            text-align: center;
+            font-family: 'Fredoka', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--primary); }
+
+        /* Game Elements */
+        .timer-bar {
+            width: 100%;
+            height: 12px;
+            background: #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .timer-fill {
+            height: 100%;
+            background: var(--secondary);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .number-display {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin: 10px 0;
+            color: #555;
+        }
+        .target-digit {
+            color: var(--secondary);
+            text-decoration: underline;
+            text-decoration-thickness: 5px;
+            text-underline-offset: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 4px 0 #357ABD;
+        }
+        button:active { transform: translateY(4px); box-shadow: none; }
+        button:hover { filter: brightness(1.1); }
+
+        button.start-btn {
+            background: var(--secondary);
+            box-shadow: 0 4px 0 #D45050;
+            font-size: 1.4rem;
+            padding: 15px 40px;
+            margin-top: 10px;
+        }
+
+        /* Results & Expanded Review */
+        .score-big { font-size: 4rem; color: var(--primary); margin: 0; }
+        
+        .review-container {
+            width: 100%;
+            background: #f0f4f8;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            height: 220px; /* Reduced slightly so button is visible */
+            overflow-y: auto;
+            text-align: left;
+            border: 1px solid #e1e1e1;
+        }
+
+        .review-card {
+            background: white;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 6px solid #ccc;
+        }
+
+        .review-card.correct { border-left-color: var(--success); }
+        .review-card.wrong { border-left-color: var(--secondary); }
+
+        .review-num-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #444;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+
+        .review-detail { font-size: 0.95rem; color: #666; }
+        .correct-text { color: var(--success); font-weight: bold; }
+        .wrong-text { color: var(--secondary); font-weight: bold; }
+
+        /* Animation Canvas */
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        /* Badges for 3-4 score */
+        .badge-container {
+            display: none;
+            gap: 10px;
+            margin: 10px 0;
+            justify-content: center;
+        }
+        .badge {
+            font-size: 2rem;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="animCanvas"></canvas>
+
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>Decimal Dash!</h1>
+            <p>Master the Place Value Chart</p>
+            <div style="margin: 15px 0; width: 100%; display:flex; justify-content:center; flex-direction:column; align-items:center;">
+                <label for="username" style="display:block; margin-bottom:5px; color:#666;">Enter your Name:</label>
+                <input type="text" id="username" placeholder="Math Whiz">
+            </div>
+            <p style="font-size: 0.9rem; color: #888;">You have <b>60 seconds</b> for <b>10 questions</b>.</p>
+            <button class="start-btn" onclick="startGame()">Start Game 🚀</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div style="display:flex; justify-content:space-between; width:100%; align-items:flex-end;">
+                <div style="font-size:0.9rem; color:#888;">Question <span id="current-q">1</span>/10</div>
+                <div style="font-size:0.9rem; color:var(--primary); font-weight:bold;" id="player-name-display">Player</div>
+            </div>
+            
+            <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+            
+            <div class="number-display" id="number-display"></div>
+
+            <p style="margin:0;">What is the place value of the <span style="color:var(--secondary); text-decoration:underline;">underlined</span> digit?</p>
+
+            <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen">
+            <h1 id="result-title">Finished!</h1>
+            <h2 class="score-big"><span id="final-score">0</span>/10</h2>
+            <p class="feedback-text" id="feedback-msg" style="font-size: 1.2rem;"></p>
+            
+            <div class="badge-container" id="badges">
+                <div class="badge">👍</div><div class="badge">📚</div><div class="badge">✏️</div>
+            </div>
+
+            <div class="review-container" id="review-list"></div>
+
+            <!-- THE PLAY AGAIN BUTTON -->
+            <button class="start-btn" onclick="resetGame()">Play Again 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // --- GAME STATE ---
+        let playerName = "";
+        let score = 0;
+        let questionCount = 0;
+        let timeLeft = 60;
+        let timerInterval;
+        let gameHistory = []; 
+        let questionDeck = [];
+        const totalQuestions = 10;
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const numberDisplay = document.getElementById('number-display');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQSpan = document.getElementById('current-q');
+        const timerFill = document.getElementById('timer-fill');
+        const finalScoreSpan = document.getElementById('final-score');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const resultTitle = document.getElementById('result-title');
+        const reviewList = document.getElementById('review-list');
+        const nameInput = document.getElementById('username');
+        const nameDisplay = document.getElementById('player-name-display');
+        const badges = document.getElementById('badges');
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // --- LOGIC ---
+        function startGame() {
+            playerName = nameInput.value.trim() || "Math Whiz";
+            nameDisplay.innerText = playerName;
+            score = 0;
+            questionCount = 0;
+            timeLeft = 60;
+            gameHistory = [];
+            
+            buildQuestionDeck();
+            showScreen('game-screen');
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if(timeLeft <= 0) endGame(false);
+            }, 1000);
+
+            nextQuestion();
+        }
+
+        function buildQuestionDeck() {
+            const coreTypes = ["Hundreds", "Tens", "Ones", "Tenths", "Hundredths", "Thousandths"];
+            questionDeck = [...coreTypes];
+            // Add 4 more random ones to make 10
+            for(let i=0; i<4; i++) {
+                questionDeck.push(coreTypes[Math.floor(Math.random() * coreTypes.length)]);
+            }
+            // Shuffle
+            questionDeck.sort(() => Math.random() - 0.5);
+        }
+
+        function updateTimerDisplay() {
+            const percentage = (timeLeft / 60) * 100;
+            timerFill.style.width = percentage + "%";
+            if(timeLeft < 10) timerFill.style.background = "#FF4444";
+            else timerFill.style.background = "#FF6B6B";
+        }
+
+        function nextQuestion() {
+            if(questionCount >= totalQuestions) {
+                endGame(true);
+                return;
+            }
+            questionCount++;
+            currentQSpan.innerText = questionCount;
+
+            const targetType = questionDeck.pop();
+            
+            // Determine number length based on target
+            let wholeLen = 1;
+            if (targetType === "Tens") wholeLen = 2;
+            if (targetType === "Hundreds") wholeLen = 3;
+            // Randomly increase length sometimes
+            if (wholeLen < 3 && Math.random() > 0.5) wholeLen++; 
+
+            let wholePart = "";
+            wholePart += Math.floor(Math.random() * 9) + 1; 
+            for(let i=1; i<wholeLen; i++) wholePart += Math.floor(Math.random() * 10);
+            
+            let decPart = "";
+            for(let i=0; i<3; i++) decPart += Math.floor(Math.random() * 10);
+
+            const fullStr = wholePart + "." + decPart;
+            const decimalIndex = fullStr.indexOf('.');
+
+            let targetIndex = -1;
+            if(targetType === "Ones") targetIndex = decimalIndex - 1;
+            else if(targetType === "Tens") targetIndex = decimalIndex - 2;
+            else if(targetType === "Hundreds") targetIndex = decimalIndex - 3;
+            else if(targetType === "Tenths") targetIndex = decimalIndex + 1;
+            else if(targetType === "Hundredths") targetIndex = decimalIndex + 2;
+            else if(targetType === "Thousandths") targetIndex = decimalIndex + 3;
+
+            let html = "";
+            let htmlReview = ""; // Plain html for review list
+            for(let i=0; i<fullStr.length; i++) {
+                if(i === targetIndex) {
+                    html += `<span class='target-digit'>${fullStr[i]}</span>`;
+                    htmlReview += `<span style='color:#FF6B6B; text-decoration:underline;'>${fullStr[i]}</span>`;
+                } else {
+                    html += fullStr[i];
+                    htmlReview += fullStr[i];
+                }
+            }
+            numberDisplay.innerHTML = html;
+            generateOptions(targetType, htmlReview, fullStr[targetIndex]);
+        }
+
+        function generateOptions(correct, numHtml, digitVal) {
+            optionsContainer.innerHTML = "";
+            let pool = ["Hundreds", "Tens", "Ones", "Tenths", "Hundredths", "Thousandths"];
+            pool = pool.filter(p => p !== correct);
+            
+            let choices = [correct];
+            for(let i=0; i<3; i++) {
+                const r = Math.floor(Math.random() * pool.length);
+                choices.push(pool[r]);
+                pool.splice(r, 1);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.innerText = choice;
+                btn.onclick = () => checkAnswer(choice, correct, numHtml, digitVal);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct, numHtml, digitVal) {
+            // Prevent double-submit if user clicks multiple answers quickly
+            optionsContainer.querySelectorAll('button').forEach(b => { b.disabled = true; });
+            const isCorrect = (selected === correct);
+            if(isCorrect) score++;
+
+            gameHistory.push({
+                numHtml: numHtml,
+                digit: digitVal,
+                userAns: selected,
+                correctAns: correct,
+                isCorrect: isCorrect
+            });
+
+            nextQuestion();
+        }
+
+        function endGame(completed) {
+            clearInterval(timerInterval);
+            showScreen('result-screen');
+            finalScoreSpan.innerText = score;
+            resultTitle.innerText = completed ? "All Done!" : "Time's Up!";
+            badges.style.display = 'none';
+
+            // Rewards Logic (escape playerName to prevent XSS in innerHTML)
+            if(score >= 8) {
+                feedbackMsg.innerHTML = `Spectacular, <b>${escapeHtml(playerName)}</b>! Perfect Practice! 🎆`;
+                startFireworks();
+            } else if (score >= 5) {
+                feedbackMsg.innerHTML = `Great job, <b>${escapeHtml(playerName)}</b>! Look at those smileys!`;
+                startSmileys();
+            } else if (score >= 3) {
+                feedbackMsg.innerHTML = `Nice try, <b>${escapeHtml(playerName)}</b>! Keep working at it!`;
+                badges.style.display = 'flex'; // Show bouncing badges
+            } else {
+                feedbackMsg.innerHTML = `Don't give up, <b>${escapeHtml(playerName)}</b>! Try again.`;
+            }
+
+            renderReview();
+        }
+
+        function renderReview() {
+            reviewList.innerHTML = "";
+            gameHistory.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `review-card ${item.isCorrect ? 'correct' : 'wrong'}`;
+                
+                let resultHtml = "";
+                if(item.isCorrect) {
+                    resultHtml = `<div class="review-detail">You answered: <span class="correct-text">${item.userAns}</span> ✅</div>`;
+                } else {
+                    resultHtml = `
+                        <div class="review-detail">You answered: <span class="wrong-text">${item.userAns}</span> ❌</div>
+                        <div class="review-detail">Correct Answer: <span class="correct-text">${item.correctAns}</span></div>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <div class="review-num-header">${index + 1}. ${item.numHtml}</div>
+                    ${resultHtml}
+                `;
+                reviewList.appendChild(div);
+            });
+        }
+
+        function resetGame() {
+            stopAnimation();
+            showScreen('start-screen');
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // --- ANIMATION SYSTEM (Shared Canvas) ---
+        const canvas = document.getElementById('animCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animId;
+        let animType = 'none'; // 'fireworks' or 'smileys'
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function stopAnimation() {
+            cancelAnimationFrame(animId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = [];
+            animType = 'none';
+        }
+
+        // --- FIREWORKS ---
+        function startFireworks() {
+            stopAnimation();
+            animType = 'fireworks';
+            // Initial blast
+            createFirework(canvas.width / 2, canvas.height / 3);
+            loopAnimation();
+        }
+
+        function createFirework(x, y) {
+            const colors = ['#FFD93D', '#FF6B6B', '#4A90E2', '#6BCB77', '#FFF'];
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    type: 'spark',
+                    x: x, y: y,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    radius: Math.random() * 3 + 1,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    alpha: 1
+                });
+            }
+        }
+
+        // --- SMILEYS ---
+        function startSmileys() {
+            stopAnimation();
+            animType = 'smileys';
+            for(let i=0; i<30; i++) createSmiley(true);
+            loopAnimation();
+        }
+
+        function createSmiley(randomY = false) {
+            const emojis = ['😊', '😁', '🥳', '😎', '🌟'];
+            particles.push({
+                type: 'smiley',
+                text: emojis[Math.floor(Math.random() * emojis.length)],
+                x: Math.random() * canvas.width,
+                y: randomY ? Math.random() * canvas.height : -50,
+                vy: Math.random() * 3 + 2, // Falling speed
+                size: Math.random() * 20 + 20
+            });
+        }
+
+        // --- MASTER LOOP ---
+        function loopAnimation() {
+            animId = requestAnimationFrame(loopAnimation);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if(animType === 'fireworks') {
+                // Random new fireworks
+                if(Math.random() < 0.05) createFirework(Math.random() * canvas.width, Math.random() * canvas.height / 2);
+                
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.vy += 0.05; // gravity
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.01;
+                    
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    ctx.restore();
+
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                }
+            } 
+            else if (animType === 'smileys') {
+                // Keep replenishing smileys
+                if(particles.length < 40 && Math.random() < 0.1) createSmiley();
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.y += p.vy;
+                    ctx.font = `${p.size}px Arial`;
+                    ctx.fillText(p.text, p.x, p.y);
+
+                    if (p.y > canvas.height + 50) particles.splice(i, 1);
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
