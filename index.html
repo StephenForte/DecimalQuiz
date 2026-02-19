@@ -588,6 +588,8 @@
             if(!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'YOUR_WEB_APP_URL') return;
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
+                mode: 'no-cors', // Apps Script doesn't return CORS headers
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: playerName,
                     score: score
