@@ -318,6 +318,9 @@
     </div>
 
     <script>
+        // --- CONFIG ---
+        const GOOGLE_SHEET_URL = 'YOUR_WEB_APP_URL'; // Replace with your Google Apps Script Web App URL
+
         // --- GAME STATE ---
         let playerName = "";
         let score = 0;
@@ -486,15 +489,30 @@
             else if(targetType === "Hundredths")   targetIndex = decimalIndex + 2;
             else if(targetType === "Thousandths")  targetIndex = decimalIndex + 3;
 
+            // Insert commas into the whole part for display, tracking the target digit
+            // We work character-by-character and insert commas AFTER building html
+            // so we don't mess up targetIndex (which is an index into fullStr, no commas)
             let html = "";
             let htmlReview = "";
+            // Build a display string with commas, mapping each original index to display chars
+            // Strategy: reconstruct char-by-char, inserting commas where needed in whole part
+            const wholeStr = isWholeOnly ? fullStr : fullStr.slice(0, decimalIndex);
+            const wholeLen2 = wholeStr.length;
             for(let i = 0; i < fullStr.length; i++) {
+                const ch = fullStr[i];
+                // Before emitting this char, check if a comma belongs before it (in whole part only)
+                // Comma goes before digit at position i if: i < decimalIndex, i > 0,
+                // and (decimalIndex - i) % 3 === 0
+                if(i > 0 && i < decimalIndex && (decimalIndex - i) % 3 === 0) {
+                    html += ',';
+                    htmlReview += ',';
+                }
                 if(i === targetIndex) {
-                    html += `<span class='target-digit'>${fullStr[i]}</span>`;
-                    htmlReview += `<span style='color:#FF6B6B; text-decoration:underline;'>${fullStr[i]}</span>`;
+                    html += `<span class='target-digit'>${ch}</span>`;
+                    htmlReview += `<span style='color:#FF6B6B; text-decoration:underline;'>${ch}</span>`;
                 } else {
-                    html += fullStr[i];
-                    htmlReview += fullStr[i];
+                    html += ch;
+                    htmlReview += ch;
                 }
             }
             numberDisplay.innerHTML = html;
@@ -546,14 +564,16 @@
             resultTitle.innerText = completed ? "All Done!" : "Time's Up!";
             badges.style.display = 'none';
 
-            // Rewards Logic (escape playerName to prevent XSS in innerHTML)
-            if(score >= 12) {
+            // Rewards Logic — thresholds based on % correct of questions answered
+            const answered = gameHistory.length;
+            const pctCorrect = answered > 0 ? score / answered : 0;
+            if(pctCorrect >= 0.80) {
                 feedbackMsg.innerHTML = `Spectacular, <b>${escapeHtml(playerName)}</b>! Perfect Practice! 🎆`;
                 startFireworks();
-            } else if (score >= 8) {
-                feedbackMsg.innerHTML = `Great job, <b>${escapeHtml(playerName)}</b>! Look at those smileys!`;
+            } else if (pctCorrect >= 0.50) {
+                feedbackMsg.innerHTML = `Well done, <b>${escapeHtml(playerName)}</b>! Look at those smileys!`;
                 startSmileys();
-            } else if (score >= 5) {
+            } else if (pctCorrect >= 0.25) {
                 feedbackMsg.innerHTML = `Nice try, <b>${escapeHtml(playerName)}</b>! Keep working at it!`;
                 badges.style.display = 'flex'; // Show bouncing badges
             } else {
@@ -561,6 +581,20 @@
             }
 
             renderReview();
+            saveScoreToSheet();
+        }
+
+        function saveScoreToSheet() {
+            if(!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'YOUR_WEB_APP_URL') return;
+            fetch(GOOGLE_SHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: playerName,
+                    score: score
+                })
+            })
+            .then(() => console.log("Score saved!"))
+            .catch(err => console.warn("Could not save score:", err));
         }
 
         function renderReview() {
