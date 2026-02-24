@@ -5,20 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decimal Dash! 🚀</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
 
         :root {
-            --primary: #4A90E2;
-            --secondary: #FF6B6B;
-            --success: #6BCB77;
-            --warning: #FFD93D;
-            --bg: #F7F9FC;
-            --text: #333;
+            --primary: #7C3AED;
+            --primary-shadow: #5B21B6;
+            --secondary: #F59E0B;
+            --secondary-shadow: #B45309;
+            --success: #10B981;
+            --danger: #EF4444;
+            --pink: #EC4899;
+            --bg: #FFF8F0;
+            --text: #1E1B4B;
+            --card: #ffffff;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background-color: var(--bg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             color: var(--text);
             margin: 0;
             display: flex;
@@ -26,219 +32,490 @@
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
-            background-image: radial-gradient(#e6e9f0 1px, transparent 1px);
-            background-size: 20px 20px;
+        }
+
+        /* Floating stars in background */
+        body::before {
+            content: '⭐ 🌟 ✨ 💫 ⭐ 🌟 ✨ 💫 ⭐ 🌟';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            font-size: 1.5rem;
+            opacity: 0.15;
+            pointer-events: none;
+            word-spacing: 60px;
+            letter-spacing: 60px;
+            line-height: 80px;
+            z-index: 0;
+            animation: starFloat 20s linear infinite;
+        }
+        @keyframes starFloat {
+            from { transform: translateY(0px) rotate(0deg); }
+            to { transform: translateY(-40px) rotate(5deg); }
         }
 
         .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 600px;
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 4px rgba(255,255,255,0.3);
+            width: 92%;
+            max-width: 620px;
             text-align: center;
             position: relative;
             z-index: 10;
-            max-height: 95vh;
+            max-height: 96vh;
             display: flex;
             flex-direction: column;
-            /* Ensure container doesn't overflow screen */
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
-        h1 { color: var(--primary); margin-bottom: 0.5rem; font-size: 2.2rem; }
-        h2 { font-size: 1.5rem; margin: 10px 0; }
+        h1 {
+            color: var(--primary);
+            margin: 0 0 0.3rem 0;
+            font-size: 2.4rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 0px rgba(124,58,237,0.2);
+            letter-spacing: 1px;
+        }
+        h2 { font-size: 1.4rem; margin: 8px 0; }
 
         /* Screens */
         .screen {
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             width: 100%;
         }
-
         .screen.active { display: flex; }
+
+        /* START SCREEN */
+        .start-mascot {
+            font-size: 4rem;
+            animation: mascotBounce 1.5s ease-in-out infinite alternate;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+        @keyframes mascotBounce {
+            from { transform: translateY(0) rotate(-5deg); }
+            to { transform: translateY(-12px) rotate(5deg); }
+        }
+
+        .start-tagline {
+            font-size: 1.1rem;
+            color: #6B7280;
+            margin: 0;
+            background: linear-gradient(90deg, var(--primary), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        .name-box {
+            background: linear-gradient(135deg, #F3F4FF, #FFF0FA);
+            border-radius: 16px;
+            padding: 1rem;
+            width: 100%;
+            border: 2px solid rgba(124,58,237,0.2);
+        }
 
         /* Inputs */
         input[type="text"] {
-            padding: 15px;
+            padding: 14px 18px;
             font-size: 1.2rem;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            width: 70%;
+            border: 3px solid #E5E7EB;
+            border-radius: 14px;
+            width: 80%;
             text-align: center;
             font-family: 'Fredoka', sans-serif;
             outline: none;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: white;
         }
-        input[type="text"]:focus { border-color: var(--primary); }
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(124,58,237,0.15);
+        }
 
-        /* Game Elements */
+        .game-info-pill {
+            background: linear-gradient(135deg, #EDE9FE, #FCE7F3);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 0.95rem;
+            color: #5B21B6;
+            font-weight: 600;
+            border: 2px solid rgba(124,58,237,0.2);
+        }
+
+        /* Timer Bar */
         .timer-bar-wrap {
             width: 100%;
             position: relative;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             flex-shrink: 0;
         }
         .timer-bar {
             width: 100%;
-            height: 12px;
-            background: #eee;
-            border-radius: 6px;
-            overflow: visible;
+            height: 14px;
+            background: #F3F4F6;
+            border-radius: 7px;
+            overflow: hidden;
+            border: 2px solid #E5E7EB;
         }
         .timer-fill {
             height: 100%;
-            background: var(--secondary);
+            background: linear-gradient(90deg, #10B981, #34D399);
             width: 100%;
             transition: width 1s linear;
-            border-radius: 6px;
+            border-radius: 5px;
         }
+
+        /* Progress Bar (Race Track) */
         .progress-bar-wrap {
             width: 100%;
             position: relative;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             flex-shrink: 0;
+        }
+        .track-label {
+            font-size: 0.75rem;
+            color: #9CA3AF;
+            text-align: left;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
         }
         .progress-bar {
             width: 100%;
-            height: 12px;
-            background: #eee;
-            border-radius: 6px;
+            height: 32px;
+            background: linear-gradient(90deg, #FEF3C7, #FDE68A);
+            border-radius: 16px;
             overflow: visible;
             position: relative;
+            border: 3px solid #F59E0B;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
         }
         .progress-fill {
             height: 100%;
-            background: var(--success);
+            background: linear-gradient(90deg, #10B981, #34D399, #6EE7B7);
             width: 0%;
-            transition: width 0.4s ease;
-            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 13px;
         }
+
+        /* Milestone markers on the track */
+        .milestone-marks {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        .milestone-mark {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 3px;
+            background: rgba(245,158,11,0.5);
+            border-radius: 2px;
+        }
+        .milestone-flag {
+            position: absolute;
+            top: -18px;
+            font-size: 0.9rem;
+            transform: translateX(-50%);
+            opacity: 0.7;
+        }
+        /* Finish line */
+        .finish-line {
+            position: absolute;
+            right: 0;
+            top: -6px;
+            bottom: -6px;
+            width: 10px;
+            background: repeating-linear-gradient(
+                180deg,
+                black 0px, black 5px,
+                white 5px, white 10px
+            );
+            border-radius: 3px;
+            z-index: 3;
+        }
+        .finish-ribbon {
+            position: absolute;
+            right: -4px;
+            top: -28px;
+            font-size: 1.2rem;
+            z-index: 4;
+        }
+
+        /* Milestone celebration overlay */
+        .milestone-pop {
+            position: absolute;
+            top: -70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #7C3AED, #EC4899);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 50;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: popIn 2s ease forwards;
+        }
+        @keyframes popIn {
+            0%   { opacity: 0; transform: translateX(-50%) scale(0.5) translateY(10px); }
+            20%  { opacity: 1; transform: translateX(-50%) scale(1.1) translateY(0px); }
+            80%  { opacity: 1; transform: translateX(-50%) scale(1) translateY(0px); }
+            100% { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(-10px); }
+        }
+
         .poop-emoji {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.6rem;
-            transition: left 0.4s ease;
+            font-size: 1.8rem;
+            transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none;
             line-height: 1;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            z-index: 5;
+        }
+
+        /* Question Type Badge */
+        .question-type-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .badge-placevalue {
+            background: #EDE9FE;
+            color: #5B21B6;
+            border: 1.5px solid #C4B5FD;
+        }
+        .badge-rounding {
+            background: #FEF3C7;
+            color: #B45309;
+            border: 1.5px solid #FCD34D;
         }
 
         .number-display {
-            font-size: 3.5rem;
-            font-weight: 600;
+            font-size: 3.4rem;
+            font-weight: 700;
             letter-spacing: 2px;
-            margin: 10px 0;
-            color: #555;
+            margin: 6px 0;
+            color: #1E1B4B;
+            background: linear-gradient(135deg, #F3F4FF, #FFF0FA);
+            border-radius: 16px;
+            padding: 12px 20px;
+            border: 2px solid rgba(124,58,237,0.15);
+            width: 100%;
         }
         .target-digit {
-            color: var(--secondary);
+            color: var(--danger);
             text-decoration: underline;
-            text-decoration-thickness: 5px;
-            text-underline-offset: 8px;
+            text-decoration-thickness: 4px;
+            text-underline-offset: 6px;
+            background: rgba(239,68,68,0.1);
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+
+        .question-prompt {
+            font-size: 1.05rem;
+            color: #374151;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* Rounding arrow display */
+        .rounding-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin: 4px 0;
+        }
+        .round-arrow {
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: arrowPulse 1.2s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(4px); }
+        }
+        .round-target-box {
+            background: linear-gradient(135deg, #EDE9FE, #FCE7F3);
+            border: 2px dashed #A78BFA;
+            border-radius: 12px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            color: #5B21B6;
+            font-weight: 700;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
         }
 
         button {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #9333EA);
             color: white;
             border: none;
-            padding: 15px;
-            font-size: 1.1rem;
-            border-radius: 12px;
+            padding: 16px 12px;
+            font-size: 1.05rem;
+            border-radius: 14px;
             cursor: pointer;
             font-family: inherit;
-            transition: transform 0.1s, background 0.2s;
-            box-shadow: 0 4px 0 #357ABD;
+            font-weight: 600;
+            transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+            box-shadow: 0 5px 0 var(--primary-shadow);
+            letter-spacing: 0.3px;
         }
-        button:active { transform: translateY(4px); box-shadow: none; }
-        button:hover { filter: brightness(1.1); }
+        button:active { transform: translateY(5px); box-shadow: none; }
+        button:hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 6px 0 var(--primary-shadow); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        button.correct-flash {
+            background: linear-gradient(135deg, #10B981, #34D399) !important;
+            box-shadow: 0 5px 0 #059669 !important;
+        }
+        button.wrong-flash {
+            background: linear-gradient(135deg, #EF4444, #F87171) !important;
+            box-shadow: 0 5px 0 #DC2626 !important;
+        }
 
         button.start-btn {
-            background: var(--secondary);
-            box-shadow: 0 4px 0 #D45050;
-            font-size: 1.4rem;
-            padding: 15px 40px;
-            margin-top: 10px;
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            box-shadow: 0 5px 0 var(--secondary-shadow);
+            font-size: 1.3rem;
+            padding: 16px 40px;
+            margin-top: 8px;
+            border-radius: 50px;
+            color: #1E1B4B;
+        }
+        button.start-btn:hover {
+            box-shadow: 0 6px 0 var(--secondary-shadow);
+        }
+        button.start-btn:active {
+            box-shadow: none;
         }
 
-        /* Results & Expanded Review */
-        .score-big { font-size: 4rem; color: var(--primary); margin: 0; }
-        
+        /* Score header area in game */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: linear-gradient(135deg, #F3F4FF, #FFF0FA);
+            border-radius: 12px;
+            padding: 8px 14px;
+            border: 1px solid rgba(124,58,237,0.15);
+        }
+        .game-header-left { font-size: 0.9rem; color: #6B7280; font-weight: 600; }
+        .game-header-right { font-size: 0.9rem; color: var(--primary); font-weight: 700; }
+        .live-score { font-size: 1rem; font-weight: 700; color: var(--success); }
+
+        /* Results */
+        .score-big { font-size: 3.8rem; color: var(--primary); margin: 0; font-weight: 700; }
+        .score-pct {
+            font-size: 1.5rem;
+            color: #6B7280;
+            margin: 0;
+        }
+
+        .result-badge {
+            font-size: 3.5rem;
+            animation: resultBadgeBounce 0.8s ease-in-out infinite alternate;
+        }
+        @keyframes resultBadgeBounce {
+            from { transform: translateY(0) rotate(-5deg); }
+            to { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .feedback-box {
+            background: linear-gradient(135deg, #EDE9FE, #FCE7F3);
+            border-radius: 16px;
+            padding: 12px 20px;
+            width: 100%;
+            border: 2px solid rgba(124,58,237,0.2);
+        }
+
         .review-container {
             width: 100%;
-            background: #f0f4f8;
-            border-radius: 10px;
+            background: #F9FAFB;
+            border-radius: 14px;
             padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 15px;
-            height: 220px; /* Reduced slightly so button is visible */
+            margin-top: 6px;
+            height: 200px;
             overflow-y: auto;
             text-align: left;
-            border: 1px solid #e1e1e1;
+            border: 2px solid #E5E7EB;
         }
 
         .review-card {
             background: white;
-            margin-bottom: 12px;
-            padding: 15px;
+            margin-bottom: 10px;
+            padding: 12px 14px;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-left: 6px solid #ccc;
+            gap: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border-left: 5px solid #ccc;
         }
-
         .review-card.correct { border-left-color: var(--success); }
-        .review-card.wrong { border-left-color: var(--secondary); }
+        .review-card.wrong { border-left-color: var(--danger); }
 
         .review-num-header {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #444;
-            letter-spacing: 2px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-bottom: 5px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #374151;
+            letter-spacing: 1px;
         }
-
-        .review-detail { font-size: 0.95rem; color: #666; }
-        .correct-text { color: var(--success); font-weight: bold; }
-        .wrong-text { color: var(--secondary); font-weight: bold; }
+        .review-detail { font-size: 0.9rem; color: #6B7280; }
+        .correct-text { color: var(--success); font-weight: 700; }
+        .wrong-text { color: var(--danger); font-weight: 700; }
 
         /* Animation Canvas */
         canvas {
-            position: absolute;
+            position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
             z-index: 100;
         }
-        
-        /* Badges for 3-4 score */
-        .badge-container {
-            display: none;
-            gap: 10px;
-            margin: 10px 0;
-            justify-content: center;
-        }
-        .badge {
-            font-size: 2rem;
-            animation: bounce 1s infinite alternate;
-        }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
+        /* Star burst animation for correct answers */
+        .star-burst {
+            position: absolute;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: starBurst 0.6s ease-out forwards;
+            z-index: 200;
+        }
+        @keyframes starBurst {
+            0%   { opacity: 1; transform: scale(0.5) translateY(0); }
+            100% { opacity: 0; transform: scale(1.5) translateY(-30px); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #F3F4F6; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+        /* Keyframes for poop animations */
         @keyframes poopWobble {
             0%   { transform: translateY(-50%) rotate(-8deg); }
             50%  { transform: translateY(-50%) rotate(8deg); }
@@ -246,17 +523,19 @@
         }
         @keyframes poopBounce {
             from { transform: translateY(-50%); }
-            to   { transform: translateY(calc(-50% - 8px)); }
+            to   { transform: translateY(calc(-50% - 10px)); }
         }
         @keyframes poopSpin {
             from { transform: translateY(-50%) rotate(0deg); }
             to   { transform: translateY(-50%) rotate(360deg); }
         }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        @keyframes poopDance {
+            0%   { transform: translateY(-50%) rotate(-15deg) scale(1); }
+            25%  { transform: translateY(calc(-50% - 12px)) rotate(0deg) scale(1.2); }
+            50%  { transform: translateY(-50%) rotate(15deg) scale(1); }
+            75%  { transform: translateY(calc(-50% - 12px)) rotate(0deg) scale(1.2); }
+            100% { transform: translateY(-50%) rotate(-15deg) scale(1); }
+        }
 
     </style>
 </head>
@@ -267,52 +546,83 @@
     <div class="container">
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
+            <div class="start-mascot">💩</div>
             <h1>Decimal Dash!</h1>
-            <p>Master the Place Value Chart</p>
-            <div style="margin: 15px 0; width: 100%; display:flex; justify-content:center; flex-direction:column; align-items:center;">
-                <label for="username" style="display:block; margin-bottom:5px; color:#666;">Enter your Name:</label>
+            <p class="start-tagline">Race to the finish line with math skills!</p>
+
+            <div class="name-box">
+                <label for="username" style="display:block; margin-bottom:8px; color:#5B21B6; font-weight:600;">What's your name, Math Star?</label>
                 <input type="text" id="username" placeholder="Math Whiz">
             </div>
-            <p style="font-size: 0.9rem; color: #888;">You have <b>90 seconds</b> for <b>15 questions</b>.</p>
-            <button class="start-btn" onclick="startGame()">Start Game 🚀</button>
+
+            <div class="game-info-pill">🕒 3 minutes &nbsp;|&nbsp; 📝 20 questions</div>
+            <p style="font-size: 0.85rem; color: #9CA3AF; margin: 0;">Place Values + Rounding Decimals</p>
+
+            <button class="start-btn" onclick="startGame()">Let's Go! 🚀</button>
         </div>
 
         <!-- Game Screen -->
         <div id="game-screen" class="screen">
-            <div style="display:flex; justify-content:space-between; width:100%; align-items:flex-end;">
-                <div style="font-size:0.9rem; color:#888;">Question <span id="current-q">1</span>/15</div>
-                <div style="font-size:0.9rem; color:var(--primary); font-weight:bold;" id="player-name-display">Player</div>
+            <div class="game-header">
+                <div class="game-header-left">Q <span id="current-q">1</span>/20</div>
+                <div class="game-header-right" id="player-name-display">Player</div>
+                <div class="live-score">✅ <span id="live-score">0</span></div>
             </div>
 
-            <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+            <!-- Timer Bar -->
+            <div class="timer-bar-wrap">
+                <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+            </div>
 
+            <!-- Progress Race Track -->
             <div class="progress-bar-wrap">
-                <div class="progress-bar">
+                <div class="track-label">
+                    <span>🏁 Start</span>
+                    <span>Finish 🏆</span>
+                </div>
+                <div class="progress-bar" id="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
+                    <!-- Milestone marks injected by JS -->
+                    <div class="milestone-marks" id="milestone-marks"></div>
+                    <!-- Finish line -->
+                    <div class="finish-line"></div>
+                    <div class="finish-ribbon">🎀</div>
                     <span class="poop-emoji" id="poop-emoji" style="left:0%;">💩</span>
                 </div>
             </div>
-            
+
+            <!-- Question type badge -->
+            <div id="question-type-badge" class="question-type-badge badge-placevalue">Place Value</div>
+
             <div class="number-display" id="number-display"></div>
 
-            <p style="margin:0;">What is the place value of the <span style="color:var(--secondary); text-decoration:underline;">underlined</span> digit?</p>
+            <!-- For place value: one prompt; for rounding: prompt + arrow + target -->
+            <div id="place-value-prompt" style="display:none;">
+                <p class="question-prompt">What is the place value of the <span style="color:var(--danger);">underlined</span> digit?</p>
+            </div>
+            <div id="rounding-prompt" style="display:none;">
+                <div class="rounding-display">
+                    <p class="question-prompt" id="rounding-prompt-text"></p>
+                    <span class="round-arrow">→</span>
+                    <div class="round-target-box" id="round-target-box"></div>
+                </div>
+            </div>
 
             <div class="options-grid" id="options-container"></div>
         </div>
 
         <!-- Result Screen -->
         <div id="result-screen" class="screen">
+            <div class="result-badge" id="result-badge">🏆</div>
             <h1 id="result-title">Finished!</h1>
-            <h2 class="score-big"><span id="final-score">0</span>/15</h2>
-            <p class="feedback-text" id="feedback-msg" style="font-size: 1.2rem;"></p>
-            
-            <div class="badge-container" id="badges">
-                <div class="badge">👍</div><div class="badge">📚</div><div class="badge">✏️</div>
-            </div>
+            <h2 class="score-big"><span id="final-score">0</span>/20</h2>
+            <p class="score-pct" id="score-pct">0%</p>
+            <p class="feedback-text" id="feedback-msg" style="font-size: 1.1rem; font-weight: 600;"></p>
+
+            <div class="feedback-box" id="feedback-box" style="display:none;"></div>
 
             <div class="review-container" id="review-list"></div>
 
-            <!-- THE PLAY AGAIN BUTTON -->
             <button class="start-btn" onclick="resetGame()">Play Again 🔄</button>
         </div>
     </div>
@@ -325,11 +635,20 @@
         let playerName = "";
         let score = 0;
         let questionCount = 0;
-        let timeLeft = 90;
+        let timeLeft = 180; // 3 minutes
         let timerInterval;
         let gameHistory = [];
         let questionDeck = [];
-        const totalQuestions = 15;
+        const TOTAL_QUESTIONS = 20;
+
+        // Milestones at every 5 questions (5, 10, 15)
+        const MILESTONES = [5, 10, 15];
+        const MILESTONE_MESSAGES = [
+            "🎉 Halfway there! Keep going!",
+            "🔥 On fire! Almost done!",
+            "⚡ So close! Finish strong!"
+        ];
+        let shownMilestones = new Set();
 
         // --- DOM ELEMENTS ---
         const startScreen = document.getElementById('start-screen');
@@ -338,21 +657,63 @@
         const numberDisplay = document.getElementById('number-display');
         const optionsContainer = document.getElementById('options-container');
         const currentQSpan = document.getElementById('current-q');
+        const liveScoreSpan = document.getElementById('live-score');
         const timerFill = document.getElementById('timer-fill');
         const finalScoreSpan = document.getElementById('final-score');
+        const scorePct = document.getElementById('score-pct');
         const feedbackMsg = document.getElementById('feedback-msg');
+        const feedbackBox = document.getElementById('feedback-box');
         const resultTitle = document.getElementById('result-title');
+        const resultBadge = document.getElementById('result-badge');
         const reviewList = document.getElementById('review-list');
         const nameInput = document.getElementById('username');
         const nameDisplay = document.getElementById('player-name-display');
-        const badges = document.getElementById('badges');
         const progressFill = document.getElementById('progress-fill');
         const poopEmoji = document.getElementById('poop-emoji');
+        const milestoneMarks = document.getElementById('milestone-marks');
+        const questionTypeBadge = document.getElementById('question-type-badge');
+        const placeValuePrompt = document.getElementById('place-value-prompt');
+        const roundingPrompt = document.getElementById('rounding-prompt');
+        const roundingPromptText = document.getElementById('rounding-prompt-text');
+        const roundTargetBox = document.getElementById('round-target-box');
 
         function escapeHtml(str) {
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        function fmt(n) { return n.toLocaleString(); }
+
+        // Build milestone markers on the track
+        function buildMilestoneMarks() {
+            milestoneMarks.innerHTML = '';
+            MILESTONES.forEach((m, i) => {
+                const pct = (m / TOTAL_QUESTIONS) * 100;
+                const mark = document.createElement('div');
+                mark.className = 'milestone-mark';
+                mark.style.left = pct + '%';
+
+                const flag = document.createElement('div');
+                flag.className = 'milestone-flag';
+                flag.style.left = pct + '%';
+                flag.textContent = ['🏅','🎖️','🌟'][i] || '📍';
+
+                milestoneMarks.appendChild(mark);
+                milestoneMarks.appendChild(flag);
+            });
+        }
+
+        // Show a milestone celebration pop
+        function showMilestonePop(msg) {
+            const bar = document.getElementById('progress-bar');
+            const pop = document.createElement('div');
+            pop.className = 'milestone-pop';
+            pop.textContent = msg;
+            bar.appendChild(pop);
+            // Mini confetti burst
+            createBurst();
+            setTimeout(() => pop.remove(), 2200);
         }
 
         // --- LOGIC ---
@@ -361,171 +722,189 @@
             nameDisplay.innerText = playerName;
             score = 0;
             questionCount = 0;
-            timeLeft = 90;
+            timeLeft = 180;
             gameHistory = [];
-            
+            shownMilestones = new Set();
+
             buildQuestionDeck();
+            buildMilestoneMarks();
             showScreen('game-screen');
             updateTimerDisplay();
             progressFill.style.width = "0%";
             poopEmoji.style.left = "0%";
             poopEmoji.style.animation = "poopWobble 1.2s ease-in-out infinite";
-            poopEmoji.style.fontSize = "1.6rem";
-            
+            poopEmoji.style.fontSize = "1.8rem";
+            liveScoreSpan.textContent = "0";
+
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateTimerDisplay();
-                if(timeLeft <= 0) endGame(false);
+                if (timeLeft <= 0) endGame(false);
             }, 1000);
 
             nextQuestion();
         }
 
+        // Build deck: 10 place-value Qs + 10 rounding Qs, shuffled
         function buildQuestionDeck() {
-            const coreTypes = ["Millions", "Hundred-Thousands", "Ten-Thousands", "Thousands", "Hundreds", "Tens", "Ones", "Tenths", "Hundredths", "Thousandths"];
-            // Start with all 10 core types, then add 5 random extras to reach 15
-            questionDeck = [...coreTypes];
-            for(let i=0; i<5; i++) {
-                questionDeck.push(coreTypes[Math.floor(Math.random() * coreTypes.length)]);
-            }
-            // Shuffle
+            const placeValueTypes = ["Millions","Hundred-Thousands","Ten-Thousands","Thousands","Hundreds","Tens","Ones","Tenths","Hundredths","Thousandths"];
+            const roundingTargets = ["whole number","tenth","hundredth"];
+
+            // 10 place value questions: one per type
+            const pvDeck = [...placeValueTypes].map(t => ({ kind: 'place-value', type: t }));
+
+            // 10 rounding questions: 3-4 per target type
+            const roundDeck = [];
+            // Distribute: 4 whole, 3 tenth, 3 hundredth
+            const roundCounts = [4, 3, 3];
+            roundingTargets.forEach((rt, i) => {
+                for (let j = 0; j < roundCounts[i]; j++) {
+                    roundDeck.push({ kind: 'rounding', roundTo: rt });
+                }
+            });
+
+            // Combine and shuffle
+            questionDeck = [...pvDeck, ...roundDeck];
             questionDeck.sort(() => Math.random() - 0.5);
         }
 
         function updateTimerDisplay() {
-            const percentage = (timeLeft / 90) * 100;
+            const percentage = (timeLeft / 180) * 100;
             timerFill.style.width = percentage + "%";
-            if(timeLeft < 15) timerFill.style.background = "#FF4444";
-            else timerFill.style.background = "#FF6B6B";
+            if (timeLeft < 20) {
+                timerFill.style.background = "linear-gradient(90deg, #EF4444, #F87171)";
+            } else if (timeLeft < 45) {
+                timerFill.style.background = "linear-gradient(90deg, #F59E0B, #FBBF24)";
+            } else {
+                timerFill.style.background = "linear-gradient(90deg, #10B981, #34D399)";
+            }
         }
 
         function updatePoopProgress() {
-            const pct = questionCount / totalQuestions; // 0..1
-            // Bar is full-width; clamp left so emoji stays inside
-            const leftPct = Math.min(pct * 100, 96);
+            const pct = questionCount / TOTAL_QUESTIONS;
+            const leftPct = Math.min(pct * 100, 94);
             progressFill.style.width = (pct * 100) + "%";
             poopEmoji.style.left = leftPct + "%";
 
-            // Excitement levels based on progress
             if (pct >= 0.9) {
-                // Nearly done — big spin + bounce
-                poopEmoji.style.animation = "poopSpin 0.3s linear infinite, poopBounce 0.2s ease-in-out infinite alternate";
+                poopEmoji.style.animation = "poopDance 0.4s ease-in-out infinite";
                 poopEmoji.style.fontSize = "2.2rem";
             } else if (pct >= 0.67) {
-                // Two-thirds — fast bounce
-                poopEmoji.style.animation = "poopBounce 0.35s ease-in-out infinite alternate";
+                poopEmoji.style.animation = "poopBounce 0.3s ease-in-out infinite alternate";
                 poopEmoji.style.fontSize = "2rem";
             } else if (pct >= 0.33) {
-                // One-third — slow bounce
-                poopEmoji.style.animation = "poopBounce 0.6s ease-in-out infinite alternate";
-                poopEmoji.style.fontSize = "1.8rem";
+                poopEmoji.style.animation = "poopBounce 0.55s ease-in-out infinite alternate";
+                poopEmoji.style.fontSize = "1.9rem";
             } else {
-                // Just started — idle wobble
                 poopEmoji.style.animation = "poopWobble 1.2s ease-in-out infinite";
-                poopEmoji.style.fontSize = "1.6rem";
+                poopEmoji.style.fontSize = "1.8rem";
+            }
+
+            // Check milestones
+            MILESTONES.forEach((m, i) => {
+                if (questionCount >= m && !shownMilestones.has(m)) {
+                    shownMilestones.add(m);
+                    const msg = MILESTONE_MESSAGES[i] || "🎉 Keep it up!";
+                    showMilestonePop(msg);
+                }
+            });
+
+            // Finish line animation when done
+            if (questionCount === TOTAL_QUESTIONS) {
+                poopEmoji.style.left = "96%";
+                poopEmoji.style.animation = "poopDance 0.3s ease-in-out infinite";
             }
         }
 
+        // ---------------------------------------------------------------
         // Whole-number-only types (no decimal part shown)
-        const wholeOnlyTypes = new Set(["Millions", "Hundred-Thousands", "Ten-Thousands", "Thousands"]);
+        const wholeOnlyTypes = new Set(["Millions","Hundred-Thousands","Ten-Thousands","Thousands"]);
 
-        // Minimum digits needed to reach the target position from the right
         const minDigitsForType = {
-            "Millions": 7,
-            "Hundred-Thousands": 6,
-            "Ten-Thousands": 5,
-            "Thousands": 4,
-            "Hundreds": 3,
-            "Tens": 2,
-            "Ones": 1,
-            "Tenths": 1,
-            "Hundredths": 1,
-            "Thousandths": 1
+            "Millions": 7, "Hundred-Thousands": 6, "Ten-Thousands": 5, "Thousands": 4,
+            "Hundreds": 3, "Tens": 2, "Ones": 1,
+            "Tenths": 1, "Hundredths": 1, "Thousandths": 1
         };
 
         function nextQuestion() {
-            if(questionCount >= totalQuestions) {
-                endGame(true);
-                return;
-            }
+            if (questionCount >= TOTAL_QUESTIONS) { endGame(true); return; }
             questionCount++;
             currentQSpan.innerText = questionCount;
+            liveScoreSpan.textContent = score;
             updatePoopProgress();
 
-            const targetType = questionDeck.pop();
-            const isWholeOnly = wholeOnlyTypes.has(targetType);
+            const q = questionDeck[questionCount - 1];
+            optionsContainer.innerHTML = "";
 
-            // Build whole part with enough digits
+            if (q.kind === 'place-value') {
+                showPlaceValueQuestion(q.type);
+            } else {
+                showRoundingQuestion(q.roundTo);
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // PLACE VALUE QUESTION
+        // ---------------------------------------------------------------
+        function showPlaceValueQuestion(targetType) {
+            questionTypeBadge.textContent = "Place Value";
+            questionTypeBadge.className = "question-type-badge badge-placevalue";
+            placeValuePrompt.style.display = "block";
+            roundingPrompt.style.display = "none";
+
+            const isWholeOnly = wholeOnlyTypes.has(targetType);
             let minWhole = minDigitsForType[targetType] || 1;
-            // Randomly add 0-2 extra digits (but never exceed 7 for millions)
             let wholeLen = Math.min(minWhole + Math.floor(Math.random() * 3), 7);
 
-            let wholePart = "";
-            wholePart += Math.floor(Math.random() * 9) + 1;
-            for(let i = 1; i < wholeLen; i++) wholePart += Math.floor(Math.random() * 10);
+            let wholePart = "" + (Math.floor(Math.random() * 9) + 1);
+            for (let i = 1; i < wholeLen; i++) wholePart += Math.floor(Math.random() * 10);
 
-            // Build the full string (whole-only types show no decimal)
             let fullStr, decimalIndex;
             if (isWholeOnly) {
                 fullStr = wholePart;
-                decimalIndex = fullStr.length; // virtual decimal at end
+                decimalIndex = fullStr.length;
             } else {
                 let decPart = "";
-                for(let i = 0; i < 3; i++) decPart += Math.floor(Math.random() * 10);
+                for (let i = 0; i < 3; i++) decPart += Math.floor(Math.random() * 10);
                 fullStr = wholePart + "." + decPart;
                 decimalIndex = fullStr.indexOf('.');
             }
 
-            // Map type to character index
             let targetIndex = -1;
-            if(targetType === "Ones")              targetIndex = decimalIndex - 1;
-            else if(targetType === "Tens")         targetIndex = decimalIndex - 2;
-            else if(targetType === "Hundreds")     targetIndex = decimalIndex - 3;
-            else if(targetType === "Thousands")    targetIndex = decimalIndex - 4;
-            else if(targetType === "Ten-Thousands")       targetIndex = decimalIndex - 5;
-            else if(targetType === "Hundred-Thousands")   targetIndex = decimalIndex - 6;
-            else if(targetType === "Millions")     targetIndex = decimalIndex - 7;
-            else if(targetType === "Tenths")       targetIndex = decimalIndex + 1;
-            else if(targetType === "Hundredths")   targetIndex = decimalIndex + 2;
-            else if(targetType === "Thousandths")  targetIndex = decimalIndex + 3;
+            if      (targetType === "Ones")             targetIndex = decimalIndex - 1;
+            else if (targetType === "Tens")             targetIndex = decimalIndex - 2;
+            else if (targetType === "Hundreds")         targetIndex = decimalIndex - 3;
+            else if (targetType === "Thousands")        targetIndex = decimalIndex - 4;
+            else if (targetType === "Ten-Thousands")    targetIndex = decimalIndex - 5;
+            else if (targetType === "Hundred-Thousands")targetIndex = decimalIndex - 6;
+            else if (targetType === "Millions")         targetIndex = decimalIndex - 7;
+            else if (targetType === "Tenths")           targetIndex = decimalIndex + 1;
+            else if (targetType === "Hundredths")       targetIndex = decimalIndex + 2;
+            else if (targetType === "Thousandths")      targetIndex = decimalIndex + 3;
 
-            // Insert commas into the whole part for display, tracking the target digit
-            // We work character-by-character and insert commas AFTER building html
-            // so we don't mess up targetIndex (which is an index into fullStr, no commas)
-            let html = "";
-            let htmlReview = "";
-            // Build a display string with commas, mapping each original index to display chars
-            // Strategy: reconstruct char-by-char, inserting commas where needed in whole part
-            const wholeStr = isWholeOnly ? fullStr : fullStr.slice(0, decimalIndex);
-            const wholeLen2 = wholeStr.length;
-            for(let i = 0; i < fullStr.length; i++) {
+            let html = "", htmlReview = "";
+            for (let i = 0; i < fullStr.length; i++) {
                 const ch = fullStr[i];
-                // Before emitting this char, check if a comma belongs before it (in whole part only)
-                // Comma goes before digit at position i if: i < decimalIndex, i > 0,
-                // and (decimalIndex - i) % 3 === 0
-                if(i > 0 && i < decimalIndex && (decimalIndex - i) % 3 === 0) {
-                    html += ',';
-                    htmlReview += ',';
+                if (i > 0 && i < decimalIndex && (decimalIndex - i) % 3 === 0) {
+                    html += ','; htmlReview += ',';
                 }
-                if(i === targetIndex) {
+                if (i === targetIndex) {
                     html += `<span class='target-digit'>${ch}</span>`;
-                    htmlReview += `<span style='color:#FF6B6B; text-decoration:underline;'>${ch}</span>`;
+                    htmlReview += `<span style='color:#EF4444; text-decoration:underline; font-weight:bold;'>${ch}</span>`;
                 } else {
-                    html += ch;
-                    htmlReview += ch;
+                    html += ch; htmlReview += ch;
                 }
             }
             numberDisplay.innerHTML = html;
-            generateOptions(targetType, htmlReview, fullStr[targetIndex]);
+
+            generatePlaceValueOptions(targetType, htmlReview, fullStr[targetIndex]);
         }
 
-        function generateOptions(correct, numHtml, digitVal) {
-            optionsContainer.innerHTML = "";
-            let pool = ["Millions", "Hundred-Thousands", "Ten-Thousands", "Thousands", "Hundreds", "Tens", "Ones", "Tenths", "Hundredths", "Thousandths"];
+        function generatePlaceValueOptions(correct, numHtml, digitVal) {
+            let pool = ["Millions","Hundred-Thousands","Ten-Thousands","Thousands","Hundreds","Tens","Ones","Tenths","Hundredths","Thousandths"];
             pool = pool.filter(p => p !== correct);
-            
             let choices = [correct];
-            for(let i=0; i<3; i++) {
+            for (let i = 0; i < 3; i++) {
                 const r = Math.floor(Math.random() * pool.length);
                 choices.push(pool[r]);
                 pool.splice(r, 1);
@@ -534,50 +913,193 @@
 
             choices.forEach(choice => {
                 const btn = document.createElement('button');
-                btn.innerText = choice;
-                btn.onclick = () => checkAnswer(choice, correct, numHtml, digitVal);
+                btn.textContent = choice;
+                btn.onclick = () => checkPlaceValueAnswer(btn, choice, correct, numHtml, digitVal);
                 optionsContainer.appendChild(btn);
             });
         }
 
-        function checkAnswer(selected, correct, numHtml, digitVal) {
-            // Prevent double-submit if user clicks multiple answers quickly
-            optionsContainer.querySelectorAll('button').forEach(b => { b.disabled = true; });
+        function checkPlaceValueAnswer(btn, selected, correct, numHtml, digitVal) {
+            const buttons = optionsContainer.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
             const isCorrect = (selected === correct);
-            if(isCorrect) score++;
+            if (isCorrect) { score++; btn.classList.add('correct-flash'); triggerStarBurst(btn); }
+            else { btn.classList.add('wrong-flash'); }
 
             gameHistory.push({
-                numHtml: numHtml,
-                digit: digitVal,
-                userAns: selected,
-                correctAns: correct,
-                isCorrect: isCorrect
+                kind: 'place-value',
+                numHtml, digit: digitVal,
+                userAns: selected, correctAns: correct, isCorrect
             });
 
-            nextQuestion();
+            setTimeout(nextQuestion, isCorrect ? 300 : 600);
         }
 
+        // ---------------------------------------------------------------
+        // ROUNDING QUESTION
+        // ---------------------------------------------------------------
+        // Generate a number like 47.638 (whole 1-3 digits, decimal 3 places)
+        function generateRoundingNumber() {
+            // Whole part: 1-3 digits (1–999)
+            const wholeMax = Math.floor(Math.random() * 3); // 0,1,2 → 1,2,3 digits
+            let whole;
+            if (wholeMax === 0)      whole = Math.floor(Math.random() * 9) + 1;          // 1-9
+            else if (wholeMax === 1) whole = Math.floor(Math.random() * 90) + 10;        // 10-99
+            else                     whole = Math.floor(Math.random() * 900) + 100;       // 100-999
+
+            // Decimal part: 3 digits, avoid all zeros
+            let d1 = Math.floor(Math.random() * 10);
+            let d2 = Math.floor(Math.random() * 10);
+            let d3 = Math.floor(Math.random() * 9) + 1; // thousandths never 0 so rounding is interesting
+            return { whole, d1, d2, d3 };
+        }
+
+        // Compute correct rounded answer
+        function computeRounded(whole, d1, d2, d3, roundTo) {
+            const value = parseFloat(`${whole}.${d1}${d2}${d3}`);
+            if (roundTo === 'whole number') {
+                return Math.round(value).toString();
+            } else if (roundTo === 'tenth') {
+                return value.toFixed(1);
+            } else { // hundredth
+                return value.toFixed(2);
+            }
+        }
+
+        // Generate 3 wrong answers for rounding
+        function generateWrongRoundingAnswers(correct, roundTo, whole, d1, d2, d3) {
+            const correctNum = parseFloat(correct);
+            const wrongs = new Set();
+
+            // Strategy: tweak the last kept decimal place by ±1, ±2
+            const deltas = roundTo === 'whole number'
+                ? [1, -1, 2, -2, 3, -3]
+                : roundTo === 'tenth'
+                ? [0.1, -0.1, 0.2, -0.2]
+                : [0.01, -0.01, 0.02, -0.02];
+
+            for (const d of deltas) {
+                const candidate = correctNum + d;
+                if (candidate < 0) continue;
+                let s;
+                if (roundTo === 'whole number') s = Math.round(candidate).toString();
+                else if (roundTo === 'tenth') s = candidate.toFixed(1);
+                else s = candidate.toFixed(2);
+                if (s !== correct && !wrongs.has(s)) wrongs.add(s);
+                if (wrongs.size === 3) break;
+            }
+
+            // Fallback if not enough
+            while (wrongs.size < 3) {
+                const off = (Math.floor(Math.random() * 5) + 1) * (Math.random() < 0.5 ? 1 : -1);
+                const candidate = correctNum + (roundTo === 'whole number' ? off : off * (roundTo === 'tenth' ? 0.1 : 0.01));
+                if (candidate < 0) continue;
+                let s;
+                if (roundTo === 'whole number') s = Math.round(candidate).toString();
+                else if (roundTo === 'tenth') s = candidate.toFixed(1);
+                else s = candidate.toFixed(2);
+                if (s !== correct) wrongs.add(s);
+            }
+
+            return Array.from(wrongs).slice(0, 3);
+        }
+
+        function roundToLabel(roundTo) {
+            if (roundTo === 'whole number') return 'nearest whole number';
+            if (roundTo === 'tenth') return 'nearest tenth';
+            return 'nearest hundredth';
+        }
+
+        function showRoundingQuestion(roundTo) {
+            questionTypeBadge.textContent = "Rounding";
+            questionTypeBadge.className = "question-type-badge badge-rounding";
+            placeValuePrompt.style.display = "none";
+            roundingPrompt.style.display = "block";
+
+            const { whole, d1, d2, d3 } = generateRoundingNumber();
+            const numStr = `${whole}.${d1}${d2}${d3}`;
+            numberDisplay.innerHTML = numStr;
+
+            roundingPromptText.textContent = `Round to the`;
+            roundTargetBox.textContent = roundToLabel(roundTo);
+
+            const correct = computeRounded(whole, d1, d2, d3, roundTo);
+            const wrongs = generateWrongRoundingAnswers(correct, roundTo, whole, d1, d2, d3);
+
+            let choices = [correct, ...wrongs];
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.textContent = choice;
+                btn.onclick = () => checkRoundingAnswer(btn, choice, correct, numStr, roundTo);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkRoundingAnswer(btn, selected, correct, numStr, roundTo) {
+            const buttons = optionsContainer.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+            const isCorrect = (selected === correct);
+            if (isCorrect) { score++; btn.classList.add('correct-flash'); triggerStarBurst(btn); }
+            else { btn.classList.add('wrong-flash'); }
+
+            gameHistory.push({
+                kind: 'rounding',
+                numStr, roundTo,
+                userAns: selected, correctAns: correct, isCorrect
+            });
+
+            setTimeout(nextQuestion, isCorrect ? 300 : 600);
+        }
+
+        // ---------------------------------------------------------------
+        // STAR BURST EFFECT on correct answer
+        // ---------------------------------------------------------------
+        function triggerStarBurst(btn) {
+            const rect = btn.getBoundingClientRect();
+            const stars = ['⭐','🌟','✨','💫'];
+            for (let i = 0; i < 3; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-burst';
+                star.textContent = stars[Math.floor(Math.random() * stars.length)];
+                star.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
+                star.style.top = (rect.top + rect.height / 2) + 'px';
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 700);
+            }
+        }
+
+        // ---------------------------------------------------------------
         function endGame(completed) {
             clearInterval(timerInterval);
             showScreen('result-screen');
             finalScoreSpan.innerText = score;
-            resultTitle.innerText = completed ? "All Done!" : "Time's Up!";
-            badges.style.display = 'none';
 
-            // Rewards Logic — thresholds based on % correct of questions answered
-            const answered = gameHistory.length;
-            const pctCorrect = answered > 0 ? score / answered : 0;
-            if(pctCorrect >= 0.80) {
-                feedbackMsg.innerHTML = `Spectacular, <b>${escapeHtml(playerName)}</b>! Perfect Practice! 🎆`;
+            const pct = Math.round((score / TOTAL_QUESTIONS) * 100);
+            scorePct.textContent = pct + "% correct";
+            resultTitle.innerText = completed ? "All Done! 🎉" : "Time's Up! ⏰";
+
+            feedbackBox.style.display = 'none';
+
+            if (pct >= 90) {
+                resultBadge.textContent = "🏆";
+                feedbackMsg.innerHTML = `Incredible, <b>${escapeHtml(playerName)}</b>! You're a Decimal Master! 🎆`;
                 startFireworks();
-            } else if (pctCorrect >= 0.50) {
-                feedbackMsg.innerHTML = `Well done, <b>${escapeHtml(playerName)}</b>! Look at those smileys!`;
+            } else if (pct >= 70) {
+                resultBadge.textContent = "🌟";
+                feedbackMsg.innerHTML = `Awesome work, <b>${escapeHtml(playerName)}</b>! Super strong! ⭐`;
                 startSmileys();
-            } else if (pctCorrect >= 0.25) {
-                feedbackMsg.innerHTML = `Nice try, <b>${escapeHtml(playerName)}</b>! Keep working at it!`;
-                badges.style.display = 'flex'; // Show bouncing badges
+            } else if (pct >= 50) {
+                resultBadge.textContent = "😎";
+                feedbackMsg.innerHTML = `Nice job, <b>${escapeHtml(playerName)}</b>! You're getting there! 👍`;
+                startSmileys();
+            } else if (pct >= 25) {
+                resultBadge.textContent = "💪";
+                feedbackMsg.innerHTML = `Keep at it, <b>${escapeHtml(playerName)}</b>! Practice makes perfect!`;
             } else {
-                feedbackMsg.innerHTML = `Don't give up, <b>${escapeHtml(playerName)}</b>! Try again.`;
+                resultBadge.textContent = "🎯";
+                feedbackMsg.innerHTML = `Don't give up, <b>${escapeHtml(playerName)}</b>! You've got this!`;
             }
 
             renderReview();
@@ -585,15 +1107,12 @@
         }
 
         function saveScoreToSheet() {
-            if(!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'YOUR_WEB_APP_URL') return;
+            if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'YOUR_WEB_APP_URL') return;
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Apps Script doesn't return CORS headers
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: playerName,
-                    score: score
-                })
+                body: JSON.stringify({ name: playerName, score: score, total: TOTAL_QUESTIONS })
             })
             .then(() => console.log("Score saved!"))
             .catch(err => console.warn("Could not save score:", err));
@@ -604,21 +1123,32 @@
             gameHistory.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = `review-card ${item.isCorrect ? 'correct' : 'wrong'}`;
-                
-                let resultHtml = "";
-                if(item.isCorrect) {
-                    resultHtml = `<div class="review-detail">You answered: <span class="correct-text">${item.userAns}</span> ✅</div>`;
+
+                let header = "", detail = "";
+
+                if (item.kind === 'place-value') {
+                    header = `${index + 1}. ${item.numHtml}`;
+                    if (item.isCorrect) {
+                        detail = `<div class="review-detail">You said: <span class="correct-text">${escapeHtml(item.userAns)}</span> ✅</div>`;
+                    } else {
+                        detail = `
+                            <div class="review-detail">You said: <span class="wrong-text">${escapeHtml(item.userAns)}</span> ❌</div>
+                            <div class="review-detail">Answer: <span class="correct-text">${escapeHtml(item.correctAns)}</span></div>
+                        `;
+                    }
                 } else {
-                    resultHtml = `
-                        <div class="review-detail">You answered: <span class="wrong-text">${item.userAns}</span> ❌</div>
-                        <div class="review-detail">Correct Answer: <span class="correct-text">${item.correctAns}</span></div>
-                    `;
+                    header = `${index + 1}. Round <b>${escapeHtml(item.numStr)}</b> to the ${escapeHtml(item.roundTo)}`;
+                    if (item.isCorrect) {
+                        detail = `<div class="review-detail">You said: <span class="correct-text">${escapeHtml(item.userAns)}</span> ✅</div>`;
+                    } else {
+                        detail = `
+                            <div class="review-detail">You said: <span class="wrong-text">${escapeHtml(item.userAns)}</span> ❌</div>
+                            <div class="review-detail">Answer: <span class="correct-text">${escapeHtml(item.correctAns)}</span></div>
+                        `;
+                    }
                 }
 
-                div.innerHTML = `
-                    <div class="review-num-header">${index + 1}. ${item.numHtml}</div>
-                    ${resultHtml}
-                `;
+                div.innerHTML = `<div class="review-num-header">${header}</div>${detail}`;
                 reviewList.appendChild(div);
             });
         }
@@ -633,12 +1163,12 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // --- ANIMATION SYSTEM (Shared Canvas) ---
+        // --- ANIMATION SYSTEM ---
         const canvas = document.getElementById('animCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         let animId;
-        let animType = 'none'; // 'fireworks' or 'smileys'
+        let animType = 'none';
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -654,88 +1184,100 @@
             animType = 'none';
         }
 
-        // --- FIREWORKS ---
+        // Mini burst for milestone celebrations
+        function createBurst() {
+            const cx = canvas.width / 2;
+            const cy = canvas.height * 0.4;
+            const colors = ['#FFD93D','#FF6B6B','#7C3AED','#10B981','#EC4899','#60A5FA'];
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    type: 'spark', x: cx, y: cy,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    radius: Math.random() * 4 + 2,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    alpha: 1
+                });
+            }
+            if (animType === 'none') {
+                animType = 'burst';
+                loopAnimation();
+            }
+        }
+
         function startFireworks() {
             stopAnimation();
             animType = 'fireworks';
-            // Initial blast
             createFirework(canvas.width / 2, canvas.height / 3);
             loopAnimation();
         }
 
         function createFirework(x, y) {
-            const colors = ['#FFD93D', '#FF6B6B', '#4A90E2', '#6BCB77', '#FFF'];
-            for (let i = 0; i < 40; i++) {
+            const colors = ['#FFD93D','#FF6B6B','#7C3AED','#10B981','#EC4899','#60A5FA','#FFF'];
+            for (let i = 0; i < 50; i++) {
                 particles.push({
-                    type: 'spark',
-                    x: x, y: y,
+                    type: 'spark', x, y,
                     color: colors[Math.floor(Math.random() * colors.length)],
-                    radius: Math.random() * 3 + 1,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: (Math.random() - 0.5) * 8,
+                    radius: Math.random() * 4 + 1,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
                     alpha: 1
                 });
             }
         }
 
-        // --- SMILEYS ---
         function startSmileys() {
             stopAnimation();
             animType = 'smileys';
-            for(let i=0; i<30; i++) createSmiley(true);
+            for (let i = 0; i < 30; i++) createSmiley(true);
             loopAnimation();
         }
 
         function createSmiley(randomY = false) {
-            const emojis = ['😊', '😁', '🥳', '😎', '🌟'];
+            const emojis = ['😊','😁','🥳','😎','🌟','⭐','💫','✨','🎉','🎊'];
             particles.push({
                 type: 'smiley',
                 text: emojis[Math.floor(Math.random() * emojis.length)],
                 x: Math.random() * canvas.width,
                 y: randomY ? Math.random() * canvas.height : -50,
-                vy: Math.random() * 3 + 2, // Falling speed
+                vy: Math.random() * 3 + 1.5,
                 size: Math.random() * 20 + 20
             });
         }
 
-        // --- MASTER LOOP ---
         function loopAnimation() {
             animId = requestAnimationFrame(loopAnimation);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if(animType === 'fireworks') {
-                // Random new fireworks
-                if(Math.random() < 0.05) createFirework(Math.random() * canvas.width, Math.random() * canvas.height / 2);
-                
+            if (animType === 'fireworks' || animType === 'burst') {
+                if (animType === 'fireworks' && Math.random() < 0.06) {
+                    createFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+                }
                 for (let i = particles.length - 1; i >= 0; i--) {
                     const p = particles[i];
-                    p.vy += 0.05; // gravity
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.alpha -= 0.01;
-                    
+                    p.vy += 0.08;
+                    p.x += p.vx; p.y += p.vy;
+                    p.alpha -= 0.015;
                     ctx.save();
-                    ctx.globalAlpha = p.alpha;
+                    ctx.globalAlpha = Math.max(p.alpha, 0);
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                     ctx.fillStyle = p.color;
                     ctx.fill();
                     ctx.restore();
-
                     if (p.alpha <= 0) particles.splice(i, 1);
                 }
-            } 
-            else if (animType === 'smileys') {
-                // Keep replenishing smileys
-                if(particles.length < 40 && Math.random() < 0.1) createSmiley();
-
+                if (animType === 'burst' && particles.length === 0) {
+                    stopAnimation();
+                }
+            } else if (animType === 'smileys') {
+                if (particles.length < 45 && Math.random() < 0.12) createSmiley();
                 for (let i = particles.length - 1; i >= 0; i--) {
                     const p = particles[i];
                     p.y += p.vy;
                     ctx.font = `${p.size}px Arial`;
                     ctx.fillText(p.text, p.x, p.y);
-
-                    if (p.y > canvas.height + 50) particles.splice(i, 1);
+                    if (p.y > canvas.height + 60) particles.splice(i, 1);
                 }
             }
         }
