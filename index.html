@@ -954,15 +954,29 @@
             return { whole, d1, d2, d3 };
         }
 
-        // Compute correct rounded answer
+        // Compute correct rounded answer using integer arithmetic to avoid
+        // floating-point errors (e.g. 67.785.toFixed(2) === "67.78" in JS)
         function computeRounded(whole, d1, d2, d3, roundTo) {
-            const value = parseFloat(`${whole}.${d1}${d2}${d3}`);
+            // Represent the number as an integer number of thousandths
+            const thousandths = whole * 1000 + d1 * 100 + d2 * 10 + d3;
+
             if (roundTo === 'whole number') {
-                return Math.round(value).toString();
+                const rem = thousandths % 1000;
+                return (Math.floor(thousandths / 1000) + (rem >= 500 ? 1 : 0)).toString();
+
             } else if (roundTo === 'tenth') {
-                return value.toFixed(1);
+                const rem = thousandths % 100;
+                const tenthsTotal = Math.floor(thousandths / 100) + (rem >= 50 ? 1 : 0);
+                const wholeRes = Math.floor(tenthsTotal / 10);
+                const tenthDigit = tenthsTotal % 10;
+                return `${wholeRes}.${tenthDigit}`;
+
             } else { // hundredth
-                return value.toFixed(2);
+                const rem = thousandths % 10;
+                const hundredthsTotal = Math.floor(thousandths / 10) + (rem >= 5 ? 1 : 0);
+                const wholeRes = Math.floor(hundredthsTotal / 100);
+                const decPart = hundredthsTotal % 100;
+                return `${wholeRes}.${decPart.toString().padStart(2, '0')}`;
             }
         }
 
