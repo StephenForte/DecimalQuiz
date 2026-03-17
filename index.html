@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decimal Dash! 🚀</title>
+    <title>Math Dash! 🚀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
 
@@ -509,6 +509,67 @@
             100% { opacity: 0; transform: scale(1.5) translateY(-30px); }
         }
 
+        /* Subject selection */
+        .subject-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            width: 100%;
+        }
+        button.subject-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 20px 12px;
+            background: linear-gradient(135deg, #F3F4FF, #FFF0FA);
+            border: 2px solid rgba(124,58,237,0.25);
+            border-radius: 20px;
+            box-shadow: 0 5px 0 rgba(124,58,237,0.2);
+            color: var(--text);
+            text-align: center;
+        }
+        button.subject-card:hover {
+            box-shadow: 0 7px 0 rgba(124,58,237,0.2);
+            border-color: var(--primary);
+        }
+        button.subject-card:active { transform: translateY(5px); box-shadow: none; }
+        .subject-icon { font-size: 2.8rem; }
+        .subject-name { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .subject-desc { font-size: 0.78rem; color: #6B7280; line-height: 1.5; }
+
+        /* Geometry badge */
+        .badge-geometry {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1.5px solid #6EE7B7;
+        }
+
+        /* Geometry question display */
+        .geo-question-wrap {
+            width: 100%;
+            background: linear-gradient(135deg, #F0FDF4, #F3F4FF);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 2px solid rgba(16,185,129,0.2);
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        .geo-question-text {
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: #374151;
+            line-height: 1.45;
+            text-align: left;
+            width: 100%;
+        }
+
+        /* Single-column option buttons for longer answer text */
+        .options-grid.single-col { grid-template-columns: 1fr; }
+        .options-grid.single-col button { padding: 12px 16px; font-size: 0.95rem; text-align: left; }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #F3F4F6; border-radius: 3px; }
@@ -547,7 +608,7 @@
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
             <div class="start-mascot">💩</div>
-            <h1>Decimal Dash!</h1>
+            <h1>Math Dash!</h1>
             <p class="start-tagline">Race to the finish line with math skills!</p>
 
             <div class="name-box">
@@ -555,16 +616,32 @@
                 <input type="text" id="username" placeholder="Math Whiz">
             </div>
 
-            <div class="game-info-pill">🕒 3 minutes &nbsp;|&nbsp; 📝 20 questions</div>
-            <p style="font-size: 0.85rem; color: #9CA3AF; margin: 0;">Place Values + Rounding Decimals</p>
+            <button class="start-btn" onclick="goToSubjectScreen()">Let's Go! 🚀</button>
+        </div>
 
-            <button class="start-btn" onclick="startGame()">Let's Go! 🚀</button>
+        <!-- Subject Screen -->
+        <div id="subject-screen" class="screen">
+            <div class="start-mascot">🧮</div>
+            <h2 style="font-size:1.8rem; color:var(--primary); margin:0;">Choose Your Quiz!</h2>
+            <p class="start-tagline">What are we practicing today?</p>
+            <div class="subject-cards">
+                <button class="subject-card" onclick="chooseSubject('decimals')">
+                    <div class="subject-icon">🔢</div>
+                    <div class="subject-name">Decimals</div>
+                    <div class="subject-desc">Place Values &amp; Rounding<br>20 questions • 3 min</div>
+                </button>
+                <button class="subject-card" onclick="chooseSubject('geometry')">
+                    <div class="subject-icon">📐</div>
+                    <div class="subject-name">Geometry</div>
+                    <div class="subject-desc">Lines, Rays &amp; Shapes<br>10 questions • 3 min</div>
+                </button>
+            </div>
         </div>
 
         <!-- Game Screen -->
         <div id="game-screen" class="screen">
             <div class="game-header">
-                <div class="game-header-left">Q <span id="current-q">1</span>/20</div>
+                <div class="game-header-left">Q <span id="current-q">1</span>/<span id="total-q">20</span></div>
                 <div class="game-header-right" id="player-name-display">Player</div>
                 <div class="live-score">✅ <span id="live-score">0</span></div>
             </div>
@@ -608,6 +685,12 @@
                 </div>
             </div>
 
+            <!-- Geometry question display -->
+            <div class="geo-question-wrap" id="geo-question-wrap">
+                <div id="geo-diagram"></div>
+                <div class="geo-question-text" id="geo-question-text"></div>
+            </div>
+
             <div class="options-grid" id="options-container"></div>
         </div>
 
@@ -615,7 +698,7 @@
         <div id="result-screen" class="screen">
             <div class="result-badge" id="result-badge">🏆</div>
             <h1 id="result-title">Finished!</h1>
-            <h2 class="score-big"><span id="final-score">0</span>/20</h2>
+            <h2 class="score-big"><span id="final-score">0</span>/<span id="final-total">20</span></h2>
             <p class="score-pct" id="score-pct">0%</p>
             <p class="feedback-text" id="feedback-msg" style="font-size: 1.1rem; font-weight: 600;"></p>
 
@@ -631,19 +714,145 @@
         // --- CONFIG ---
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxB-Vx6b9IoL7uqg1WpbmsepuxBJV778nA8bKr_Ps0oIllrpningvFhMdXR3E3ApSd6bQ/exec';
 
+        // --- GEOMETRY QUESTION BANK ---
+        const GEO_DIAGRAM_SVG = `<svg width="220" height="135" viewBox="0 0 220 135" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="geo-arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#374151"/>
+    </marker>
+    <marker id="geo-arrR" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto-start-reverse">
+      <path d="M0,0 L0,6 L8,3 z" fill="#374151"/>
+    </marker>
+  </defs>
+  <!-- Line segment A–C (no arrows, endpoint dots) -->
+  <line x1="18" y1="80" x2="196" y2="80" stroke="#374151" stroke-width="2.5"/>
+  <!-- Full line D–B–E (arrows both ends, vertical) -->
+  <line x1="110" y1="128" x2="110" y2="8" stroke="#374151" stroke-width="2.5"
+        marker-end="url(#geo-arr)" marker-start="url(#geo-arrR)"/>
+  <!-- Ray B→F (arrow at F end, dot at B) -->
+  <line x1="110" y1="80" x2="46" y2="18" stroke="#374151" stroke-width="2.5"
+        marker-end="url(#geo-arr)"/>
+  <!-- Endpoint dots for segment (A and C) and intersection (B) -->
+  <circle cx="18"  cy="80" r="4" fill="#374151"/>
+  <circle cx="110" cy="80" r="4" fill="#374151"/>
+  <circle cx="196" cy="80" r="4" fill="#374151"/>
+  <!-- Labels -->
+  <text x="18"  y="100" text-anchor="middle" font-size="14" fill="#374151" font-weight="600" font-family="sans-serif">A</text>
+  <text x="110" y="100" text-anchor="middle" font-size="14" fill="#374151" font-weight="600" font-family="sans-serif">B</text>
+  <text x="196" y="100" text-anchor="middle" font-size="14" fill="#374151" font-weight="600" font-family="sans-serif">C</text>
+  <text x="40"  y="16"  text-anchor="middle" font-size="14" fill="#374151" font-weight="600" font-family="sans-serif">F</text>
+  <text x="122" y="12"  text-anchor="start"  font-size="14" fill="#374151" font-weight="600" font-family="sans-serif">E</text>
+  <text x="122" y="133" text-anchor="start"  font-size="14" fill="#374151" font-weight="600" font-family="sans-serif">D</text>
+</svg>`;
+
+        const GEOMETRY_QUESTIONS = [
+            // Q12-style: count line segments in a shape
+            {
+                kind: 'geometry',
+                question: "Which shape below has exactly 5 line segments?",
+                choices: ["Triangle", "Rectangle", "Pentagon", "Hexagon"],
+                correct: "Pentagon"
+            },
+            {
+                kind: 'geometry',
+                question: "Which shape below has exactly 4 line segments?",
+                choices: ["Triangle", "Square", "Pentagon", "Hexagon"],
+                correct: "Square"
+            },
+            {
+                kind: 'geometry',
+                question: "Which shape below has exactly 6 line segments?",
+                choices: ["Triangle", "Square", "Pentagon", "Hexagon"],
+                correct: "Hexagon"
+            },
+            // Q13-style: true statements about geometric figures
+            {
+                kind: 'geometry',
+                question: "Which of the following statements is true?",
+                choices: [
+                    "A line segment has no endpoints.",
+                    "A line has 2 endpoints.",
+                    "A ray has one endpoint.",
+                    "A line segment has one endpoint."
+                ],
+                correct: "A ray has one endpoint."
+            },
+            {
+                kind: 'geometry',
+                question: "Which of the following statements is true?",
+                choices: [
+                    "A line extends in only one direction.",
+                    "A ray has two endpoints.",
+                    "A line segment has exactly two endpoints.",
+                    "A point has length and width."
+                ],
+                correct: "A line segment has exactly two endpoints."
+            },
+            {
+                kind: 'geometry',
+                question: "Which of the following statements is true?",
+                choices: [
+                    "A ray is the same as a line segment.",
+                    "A line has a starting and ending point.",
+                    "A line extends in both directions with no endpoints.",
+                    "A line segment extends forever in one direction."
+                ],
+                correct: "A line extends in both directions with no endpoints."
+            },
+            // Q14-style: challenge — capital letters and angles
+            {
+                kind: 'geometry',
+                question: "Challenge: Which of the following statements is true?",
+                choices: [
+                    "The capital letter V contains two angles.",
+                    "The capital letter W contains two angles.",
+                    "The capital letter V contains one angle.",
+                    "The capital letter I contains one angle."
+                ],
+                correct: "The capital letter V contains one angle."
+            },
+            {
+                kind: 'geometry',
+                question: "Challenge: Which of the following statements is true?",
+                choices: [
+                    "The capital letter W contains one angle.",
+                    "The capital letter V contains three angles.",
+                    "The capital letter Z contains three angles.",
+                    "The capital letter W contains three angles."
+                ],
+                correct: "The capital letter W contains three angles."
+            },
+            // Q3/Q4-style: diagram-based identification
+            {
+                kind: 'geometry',
+                question: "Use the diagram to answer: which of the following is a ray?",
+                svg: GEO_DIAGRAM_SVG,
+                choices: ["Line segment AC", "Line DE", "Ray BF", "Point B"],
+                correct: "Ray BF"
+            },
+            {
+                kind: 'geometry',
+                question: "Use the diagram to answer: which of the following is a line segment?",
+                svg: GEO_DIAGRAM_SVG,
+                choices: ["Ray BF", "Line DE", "Line segment AC", "Point E"],
+                correct: "Line segment AC"
+            }
+        ];
+
         // --- GAME STATE ---
         let playerName = "";
+        let currentSubject = 'decimals';
         let score = 0;
         let questionCount = 0;
         let timeLeft = 180; // 3 minutes
         let timerInterval;
         let gameHistory = [];
         let questionDeck = [];
-        const TOTAL_QUESTIONS = 20;
+        let TOTAL_QUESTIONS = 20;
 
-        // Milestones at every 5 questions (5, 10, 15)
-        const MILESTONES = [5, 10, 15];
-        const MILESTONE_MESSAGES = [
+        // Milestones — set dynamically at game start based on subject
+        let MILESTONES = [5, 10, 15];
+        let MILESTONE_MESSAGES = [
             "🎉 Halfway there! Keep going!",
             "🔥 On fire! Almost done!",
             "⚡ So close! Finish strong!"
@@ -676,6 +885,10 @@
         const roundingPrompt = document.getElementById('rounding-prompt');
         const roundingPromptText = document.getElementById('rounding-prompt-text');
         const roundTargetBox = document.getElementById('round-target-box');
+        const geoQuestionWrap = document.getElementById('geo-question-wrap');
+        const geoQuestionText = document.getElementById('geo-question-text');
+        const geoDiagram = document.getElementById('geo-diagram');
+        const totalQSpan = document.getElementById('total-q');
 
         function escapeHtml(str) {
             const div = document.createElement('div');
@@ -717,14 +930,42 @@
         }
 
         // --- LOGIC ---
-        function startGame() {
+        function goToSubjectScreen() {
             playerName = nameInput.value.trim() || "Math Whiz";
             nameDisplay.innerText = playerName;
+            showScreen('subject-screen');
+        }
+
+        function chooseSubject(subject) {
+            currentSubject = subject;
+            if (subject === 'decimals') {
+                TOTAL_QUESTIONS = 20;
+                MILESTONES = [5, 10, 15];
+                MILESTONE_MESSAGES = [
+                    "🎉 Halfway there! Keep going!",
+                    "🔥 On fire! Almost done!",
+                    "⚡ So close! Finish strong!"
+                ];
+            } else {
+                TOTAL_QUESTIONS = 10;
+                MILESTONES = [5];
+                MILESTONE_MESSAGES = ["🎉 Halfway there! Keep going!"];
+            }
+            startGame();
+        }
+
+        function startGame() {
             score = 0;
             questionCount = 0;
             timeLeft = 180;
             gameHistory = [];
             shownMilestones = new Set();
+
+            // Reset display state
+            numberDisplay.style.display = '';
+            geoQuestionWrap.style.display = 'none';
+            optionsContainer.classList.remove('single-col');
+            totalQSpan.textContent = TOTAL_QUESTIONS;
 
             buildQuestionDeck();
             buildMilestoneMarks();
@@ -745,25 +986,28 @@
             nextQuestion();
         }
 
-        // Build deck: 10 place-value Qs + 10 rounding Qs, shuffled
+        // Build deck based on subject
         function buildQuestionDeck() {
+            if (currentSubject === 'geometry') {
+                questionDeck = [...GEOMETRY_QUESTIONS];
+                questionDeck.sort(() => Math.random() - 0.5);
+                return;
+            }
+
+            // Decimals: 10 place-value Qs + 10 rounding Qs, shuffled
             const placeValueTypes = ["Millions","Hundred-Thousands","Ten-Thousands","Thousands","Hundreds","Tens","Ones","Tenths","Hundredths","Thousandths"];
             const roundingTargets = ["whole number","tenth","hundredth"];
 
-            // 10 place value questions: one per type
             const pvDeck = [...placeValueTypes].map(t => ({ kind: 'place-value', type: t }));
 
-            // 10 rounding questions: 3-4 per target type
             const roundDeck = [];
-            // Distribute: 4 whole, 3 tenth, 3 hundredth
-            const roundCounts = [4, 3, 3];
+            const roundCounts = [4, 3, 3]; // 4 whole, 3 tenth, 3 hundredth
             roundingTargets.forEach((rt, i) => {
                 for (let j = 0; j < roundCounts[i]; j++) {
                     roundDeck.push({ kind: 'rounding', roundTo: rt });
                 }
             });
 
-            // Combine and shuffle
             questionDeck = [...pvDeck, ...roundDeck];
             questionDeck.sort(() => Math.random() - 0.5);
         }
@@ -835,11 +1079,14 @@
 
             const q = questionDeck[questionCount - 1];
             optionsContainer.innerHTML = "";
+            optionsContainer.classList.remove('single-col');
 
             if (q.kind === 'place-value') {
                 showPlaceValueQuestion(q.type);
-            } else {
+            } else if (q.kind === 'rounding') {
                 showRoundingQuestion(q.roundTo);
+            } else {
+                showGeometryQuestion(q);
             }
         }
 
@@ -851,6 +1098,8 @@
             questionTypeBadge.className = "question-type-badge badge-placevalue";
             placeValuePrompt.style.display = "block";
             roundingPrompt.style.display = "none";
+            numberDisplay.style.display = '';
+            geoQuestionWrap.style.display = 'none';
 
             const isWholeOnly = wholeOnlyTypes.has(targetType);
             let minWhole = minDigitsForType[targetType] || 1;
@@ -1029,6 +1278,8 @@
             questionTypeBadge.className = "question-type-badge badge-rounding";
             placeValuePrompt.style.display = "none";
             roundingPrompt.style.display = "block";
+            numberDisplay.style.display = '';
+            geoQuestionWrap.style.display = 'none';
 
             const { whole, d1, d2, d3 } = generateRoundingNumber();
             const numStr = `${whole}.${d1}${d2}${d3}`;
@@ -1068,6 +1319,55 @@
         }
 
         // ---------------------------------------------------------------
+        // GEOMETRY QUESTION
+        // ---------------------------------------------------------------
+        function showGeometryQuestion(q) {
+            questionTypeBadge.textContent = "Geometry";
+            questionTypeBadge.className = "question-type-badge badge-geometry";
+            placeValuePrompt.style.display = "none";
+            roundingPrompt.style.display = "none";
+            numberDisplay.style.display = 'none';
+            geoQuestionWrap.style.display = 'flex';
+            optionsContainer.classList.add('single-col');
+
+            geoQuestionText.textContent = q.question;
+
+            if (q.svg) {
+                geoDiagram.innerHTML = q.svg;
+                geoDiagram.style.display = 'block';
+            } else {
+                geoDiagram.innerHTML = '';
+                geoDiagram.style.display = 'none';
+            }
+
+            let choices = [...q.choices];
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.textContent = choice;
+                btn.onclick = () => checkGeometryAnswer(btn, choice, q.correct, q.question);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkGeometryAnswer(btn, selected, correct, questionText) {
+            const buttons = optionsContainer.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+            const isCorrect = (selected === correct);
+            if (isCorrect) { score++; btn.classList.add('correct-flash'); triggerStarBurst(btn); }
+            else { btn.classList.add('wrong-flash'); }
+
+            gameHistory.push({
+                kind: 'geometry',
+                question: questionText,
+                userAns: selected, correctAns: correct, isCorrect
+            });
+
+            setTimeout(nextQuestion, isCorrect ? 300 : 600);
+        }
+
+        // ---------------------------------------------------------------
         // STAR BURST EFFECT on correct answer
         // ---------------------------------------------------------------
         function triggerStarBurst(btn) {
@@ -1089,6 +1389,7 @@
             clearInterval(timerInterval);
             showScreen('result-screen');
             finalScoreSpan.innerText = score;
+            document.getElementById('final-total').textContent = TOTAL_QUESTIONS;
 
             const pct = Math.round((score / TOTAL_QUESTIONS) * 100);
             scorePct.textContent = pct + "% correct";
@@ -1096,9 +1397,10 @@
 
             feedbackBox.style.display = 'none';
 
+            const subject = currentSubject === 'geometry' ? 'Geometry' : 'Decimal';
             if (pct >= 90) {
                 resultBadge.textContent = "🏆";
-                feedbackMsg.innerHTML = `Incredible, <b>${escapeHtml(playerName)}</b>! You're a Decimal Master! 🎆`;
+                feedbackMsg.innerHTML = `Incredible, <b>${escapeHtml(playerName)}</b>! You're a ${subject} Master! 🎆`;
                 startFireworks();
             } else if (pct >= 70) {
                 resultBadge.textContent = "🌟";
@@ -1150,8 +1452,18 @@
                             <div class="review-detail">Answer: <span class="correct-text">${escapeHtml(item.correctAns)}</span></div>
                         `;
                     }
-                } else {
+                } else if (item.kind === 'rounding') {
                     header = `${index + 1}. Round <b>${escapeHtml(item.numStr)}</b> to the ${escapeHtml(item.roundTo)}`;
+                    if (item.isCorrect) {
+                        detail = `<div class="review-detail">You said: <span class="correct-text">${escapeHtml(item.userAns)}</span> ✅</div>`;
+                    } else {
+                        detail = `
+                            <div class="review-detail">You said: <span class="wrong-text">${escapeHtml(item.userAns)}</span> ❌</div>
+                            <div class="review-detail">Answer: <span class="correct-text">${escapeHtml(item.correctAns)}</span></div>
+                        `;
+                    }
+                } else {
+                    header = `${index + 1}. ${escapeHtml(item.question)}`;
                     if (item.isCorrect) {
                         detail = `<div class="review-detail">You said: <span class="correct-text">${escapeHtml(item.userAns)}</span> ✅</div>`;
                     } else {
@@ -1169,7 +1481,7 @@
 
         function resetGame() {
             stopAnimation();
-            showScreen('start-screen');
+            showScreen('subject-screen');
         }
 
         function showScreen(id) {
